@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/")
 public class GitHubController {
 
     private final GitHubService gitHubService;
@@ -15,12 +15,13 @@ public class GitHubController {
         this.gitHubService = gitHubService;
     }
 
-    @GetMapping(value = "/{username}/repos", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<GitHubDto> getUserRepositories(@PathVariable String username,
-                                               @RequestHeader("Accept") String acceptHeader) throws UserNotFoundException {
-        if (!acceptHeader.equals(MediaType.APPLICATION_JSON_VALUE)) {
+                                               @RequestHeader(value = "Accept", required = false) String acceptHeader) throws UserNotFoundException {
+        if (acceptHeader == null || !acceptHeader.contains("application/json")) {
             throw new UnsupportedMediaTypeException("Use JSON format only");
         }
+        System.out.println("Accept header: " + acceptHeader);
 
         return gitHubService.getUserRepositories(username);
     }

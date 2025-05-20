@@ -20,13 +20,13 @@ public class GitHubServiceImpl implements GitHubService{
             return repositories.stream()
                     .filter(repo -> !repo.fork())
                     .map(repo -> {
-                        List<BranchResponse> branches = gitHubClient.getBranches(username, repo.nameRepository());
+                        List<BranchResponse> branches = gitHubClient.getBranches(username, repo.name());
 
                         List<BranchDto> branchDtos = branches.stream()
                                 .map(branch -> new BranchDto(branch.name(), branch.commit().sha()))
                                 .toList();
 
-                        return new GitHubDto(repo.nameRepository(), repo.owner().login(), branchDtos);
+                        return new GitHubDto(repo.name(), repo.owner().login(), branchDtos);
                     })
                     .toList();
         } catch(FeignException.NotFound e){
